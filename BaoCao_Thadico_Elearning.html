@@ -1,0 +1,1235 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Báo cáo Phân tích & Thiết kế Hệ thống E-Learning Hub</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Mermaid JS for Diagrams -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.2.4/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'neutral',
+            securityLevel: 'loose',
+            themeVariables: {
+                fontFamily: 'Be Vietnam Pro, sans-serif'
+            }
+        });
+    </script>
+
+    <style>
+        /* CSS Core Variables */
+        :root {
+            --primary-color: #0A5C36; /* THACO Green */
+            --primary-light: #d1e7dd;
+            --secondary-color: #1B365D; /* Navy Blue */
+            --accent-color: #ffc107;
+            --bg-color: #f8f9fa;
+            --surface-color: #ffffff;
+            --text-color: #212529;
+            --text-muted: #6c757d;
+            --border-color: #dee2e6;
+            --sidebar-width: 280px;
+            --header-height: 70px;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --transition: all 0.25s ease-in-out;
+        }
+
+        /* Dark Mode Variables */
+        [data-theme="dark"] {
+            --bg-color: #0f172a;
+            --surface-color: #1e293b;
+            --text-color: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
+            --primary-color: #10b981;
+            --primary-light: #064e3b;
+            --secondary-color: #38bdf8;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Reset & Base Styles */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Be Vietnam Pro', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: var(--transition);
+        }
+
+        a {
+            color: var(--secondary-color);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        a:hover {
+            color: var(--primary-color);
+            text-decoration: underline;
+        }
+
+        /* App Layout */
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Header controls */
+        header {
+            position: fixed;
+            top: 0;
+            right: 0;
+            left: 0;
+            height: var(--header-height);
+            background-color: var(--surface-color);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            z-index: 100;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        .header-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header-logo i {
+            font-size: 1.8rem;
+            color: var(--primary-color);
+        }
+
+        .header-logo span {
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: var(--secondary-color);
+            letter-spacing: -0.5px;
+        }
+
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .btn-toggle-theme, .btn-print {
+            background: none;
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .btn-toggle-theme:hover, .btn-print:hover {
+            background-color: var(--border-color);
+            transform: translateY(-2px);
+        }
+
+        /* Sidebar Navigation */
+        aside {
+            position: fixed;
+            top: var(--header-height);
+            left: 0;
+            bottom: 0;
+            width: var(--sidebar-width);
+            background-color: var(--surface-color);
+            border-right: 1px solid var(--border-color);
+            overflow-y: auto;
+            padding: 1.5rem 1rem;
+            z-index: 90;
+            transition: var(--transition);
+        }
+
+        .search-container {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 10px 15px 10px 35px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: inherit;
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px var(--primary-light);
+        }
+
+        .search-container i {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .nav-title {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            margin-bottom: 0.75rem;
+            padding-left: 0.5rem;
+            font-weight: 700;
+        }
+
+        .nav-list {
+            list-style: none;
+        }
+
+        .nav-item {
+            margin-bottom: 0.25rem;
+        }
+
+        .nav-link {
+            display: block;
+            padding: 8px 12px;
+            color: var(--text-color);
+            font-size: 0.875rem;
+            border-radius: 6px;
+            text-decoration: none;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            transition: var(--transition);
+        }
+
+        .nav-link:hover {
+            background-color: var(--bg-color);
+            color: var(--primary-color);
+        }
+
+        .nav-link.active {
+            background-color: var(--primary-light);
+            color: var(--primary-color);
+            font-weight: 600;
+            border-left: 3px solid var(--primary-color);
+            border-radius: 0 6px 6px 0;
+        }
+
+        .nav-link.level-1 { padding-left: 12px; font-weight: 600; }
+        .nav-link.level-2 { padding-left: 24px; }
+        .nav-link.level-3 { padding-left: 36px; font-size: 0.8rem; }
+
+        /* Main Content Panel */
+        main {
+            flex-grow: 1;
+            margin-left: var(--sidebar-width);
+            margin-top: var(--header-height);
+            padding: 3rem 4rem;
+            max-width: calc(100vw - var(--sidebar-width));
+            background-color: var(--bg-color);
+            transition: var(--transition);
+        }
+
+        .document-wrapper {
+            background-color: var(--surface-color);
+            padding: 4rem;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            max-width: 900px;
+            margin: 0 auto;
+            transition: var(--transition);
+        }
+
+        /* Typography & Content Styles */
+        h1, h2, h3, h4, h5, h6 {
+            color: var(--secondary-color);
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+            line-height: 1.3;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 0.5rem;
+            margin-top: 0;
+            color: var(--primary-color);
+            text-align: center;
+        }
+
+        h2 {
+            font-size: 1.6rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.3rem;
+        }
+
+        h3 {
+            font-size: 1.25rem;
+        }
+
+        p {
+            margin-bottom: 1.2rem;
+            text-align: justify;
+        }
+
+        /* Title page specific */
+        .title-page {
+            text-align: center;
+            padding: 3rem 0;
+            margin-bottom: 4rem;
+            border-bottom: 3px double var(--border-color);
+        }
+
+        .title-org {
+            font-size: 1.4rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .title-sub {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+        }
+
+        .title-main {
+            font-size: 2.5rem;
+            line-height: 1.2;
+            color: var(--secondary-color);
+            font-weight: 800;
+            margin-bottom: 3rem;
+            padding: 0 1rem;
+        }
+
+        /* Lists */
+        ul, ol {
+            margin-bottom: 1.2rem;
+            padding-left: 2rem;
+        }
+
+        li {
+            margin-bottom: 0.4rem;
+        }
+
+        li::marker {
+            color: var(--primary-color);
+        }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+            font-size: 0.9rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            background-color: var(--primary-color);
+            color: #ffffff;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 0.5px;
+        }
+
+        tr:nth-child(even) {
+            background-color: rgba(0,0,0,0.02);
+        }
+
+        [data-theme="dark"] tr:nth-child(even) {
+            background-color: rgba(255,255,255,0.02);
+        }
+
+        tr:hover {
+            background-color: rgba(0,0,0,0.04);
+        }
+
+        [data-theme="dark"] tr:hover {
+            background-color: rgba(255,255,255,0.04);
+        }
+
+        /* Code Block Styling */
+        pre {
+            background-color: #1e1e1e;
+            color: #d4d4d4;
+            padding: 1.5rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 1.5rem 0;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.9rem;
+            border: 1px solid #333;
+            position: relative;
+        }
+
+        code {
+            font-family: inherit;
+        }
+
+        pre code::before {
+            content: 'PHP';
+            position: absolute;
+            top: 5px;
+            right: 15px;
+            font-size: 0.7rem;
+            color: #555;
+            font-weight: 700;
+        }
+
+        .inline-code {
+            background-color: rgba(0,0,0,0.05);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.9em;
+        }
+
+        [data-theme="dark"] .inline-code {
+            background-color: rgba(255,255,255,0.1);
+        }
+
+        /* Diagrams styling */
+        .diagram-container {
+            background-color: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 2rem;
+            margin: 2rem 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        [data-theme="dark"] .diagram-container {
+            background-color: #ffffff; /* keep white bg for diagram readability */
+            filter: invert(0.9) hue-rotate(180deg); /* invert colors for dark mode diagrams */
+        }
+
+        .mermaid {
+            width: 100%;
+        }
+
+        /* Divider */
+        hr {
+            border: none;
+            height: 1px;
+            background-color: var(--border-color);
+            margin: 3rem 0;
+        }
+
+        /* Print Button / Printing Layout */
+        @media print {
+            body {
+                background-color: #ffffff !important;
+                color: #000000 !important;
+                font-size: 12pt;
+            }
+
+            header, aside, .header-controls, .search-container, .btn-toggle-theme, .btn-print {
+                display: none !important;
+            }
+
+            main {
+                margin: 0 !important;
+                padding: 0 !important;
+                max-width: 100% !important;
+            }
+
+            .document-wrapper {
+                box-shadow: none !important;
+                padding: 0 !important;
+                background-color: transparent !important;
+                max-width: 100% !important;
+            }
+
+            .title-page {
+                page-break-after: always;
+                height: 100vh;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                border-bottom: none !important;
+            }
+
+            h1, h2, h3 {
+                page-break-after: avoid;
+                color: #000000 !important;
+            }
+
+            h1 {
+                border-bottom: 2px solid #000000 !important;
+            }
+
+            h2 {
+                border-bottom: 1px solid #000000 !important;
+            }
+
+            table {
+                page-break-inside: avoid;
+            }
+
+            tr {
+                page-break-inside: avoid;
+                page-break-after: auto;
+            }
+
+            pre, .diagram-container {
+                page-break-inside: avoid;
+                border: 1px solid #000000 !important;
+            }
+
+            [data-theme="dark"] .diagram-container {
+                filter: none !important;
+            }
+        }
+    </style>
+</head>
+<body data-theme="light">
+
+    <!-- Header Control Bar -->
+    <header>
+        <div class="header-logo">
+            <i class="fa-solid fa-graduation-cap"></i>
+            <span>THACO AGRI / THADICO E-LEARNING</span>
+        </div>
+        <div class="header-controls">
+            <button class="btn-toggle-theme" id="themeBtn" title="Chuyển chế độ Sáng/Tối">
+                <i class="fa-solid fa-moon"></i>
+            </button>
+            <button class="btn-print" onclick="window.print()" title="In báo cáo / Xuất PDF">
+                <i class="fa-solid fa-print"></i>
+            </button>
+        </div>
+    </header>
+
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside>
+            <div class="search-container">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="searchInput" class="search-input" placeholder="Tìm kiếm tài liệu...">
+            </div>
+            
+            <div class="nav-title">Mục lục báo cáo</div>
+            <ul class="nav-list" id="navList">
+                <li class="nav-item"><a href="#mo-dau" class="nav-link level-1 active">PHẦN MỞ ĐẦU</a></li>
+                <li class="nav-item"><a href="#chuong-1" class="nav-link level-1">CHƯƠNG 1. THU THẬP YÊU CẦU</a></li>
+                <li class="nav-item"><a href="#yeu-cau-chuc-nang" class="nav-link level-2">1.1.1. Yêu cầu chức năng</a></li>
+                <li class="nav-item"><a href="#yeu-cau-nguoi-dung" class="nav-link level-2">1.1.2. Yêu cầu người dùng</a></li>
+                <li class="nav-item"><a href="#yeu-cau-phi-chuc-nang" class="nav-link level-2">1.1.3. Yêu cầu phi chức năng</a></li>
+                <li class="nav-item"><a href="#yeu-cau-du-lieu" class="nav-link level-2">1.1.4. Yêu cầu dữ liệu</a></li>
+                <li class="nav-item"><a href="#bieu-do-use-case" class="nav-link level-2">1.2. Biểu đồ Use Case</a></li>
+                
+                <li class="nav-item"><a href="#chuong-2" class="nav-link level-1">CHƯƠNG 2. PHÂN TÍCH</a></li>
+                <li class="nav-item"><a href="#the-crc" class="nav-link level-2">2.1. Các thẻ CRC</a></li>
+                <li class="nav-item"><a href="#bieu-do-lop" class="nav-link level-2">2.2. Biểu đồ lớp</a></li>
+                <li class="nav-item"><a href="#bieu-do-tuan-tu" class="nav-link level-2">2.3. Biểu đồ tuần tự</a></li>
+                <li class="nav-item"><a href="#xac-dinh-thuc-the" class="nav-link level-2">2.4.1. Xác định thực thể</a></li>
+                <li class="nav-item"><a href="#erd-schema" class="nav-link level-2">2.4.2. Sơ đồ ERD</a></li>
+                
+                <li class="nav-item"><a href="#chuong-3" class="nav-link level-1">CHƯƠNG 3. THIẾT KẾ HỆ THỐNG</a></li>
+                <li class="nav-item"><a href="#kien-truc-tong-quan" class="nav-link level-2">3.1. Kiến trúc tổng quan</a></li>
+                <li class="nav-item"><a href="#kien-truc-phan-mem" class="nav-link level-2">3.2. Kiến trúc phần mềm</a></li>
+                <li class="nav-item"><a href="#thiet-ke-db" class="nav-link level-2">3.3. Thiết kế cơ sở dữ liệu</a></li>
+                <li class="nav-item"><a href="#thiet-ke-ui" class="nav-link level-2">3.4. Thiết kế giao diện</a></li>
+                
+                <li class="nav-item"><a href="#chuong-4" class="nav-link level-1">CHƯƠNG 4. TRIỂN KHAI</a></li>
+                <li class="nav-item"><a href="#cong-nghe-su-dung" class="nav-link level-2">4.1. Công nghệ sử dụng</a></li>
+                <li class="nav-item"><a href="#kiem-thu" class="nav-link level-2">4.3. Kiểm thử hệ thống</a></li>
+                <li class="nav-item"><a href="#ket-luan" class="nav-link level-1">PHẦN KẾT LUẬN</a></li>
+            </ul>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main>
+            <div class="document-wrapper" id="contentWrapper">
+                
+                <!-- Title Page -->
+                <div class="title-page">
+                    <div class="title-org">Tập đoàn THACO AGRI - Công ty THADICO</div>
+                    <div class="title-sub">Báo cáo Phân tích và Thiết kế Hệ thống</div>
+                    <div class="title-main">HỆ THỐNG QUẢN LÝ ĐÀO TẠO TRỰC TUYẾN E-LEARNING HUB</div>
+                    <p style="text-align: center; color: var(--text-muted);">Hà Nội, 2026</p>
+                </div>
+
+                <!-- PHẦN MỞ ĐẦU -->
+                <section id="mo-dau">
+                    <h2>PHẦN MỞ ĐẦU</h2>
+                    <p>Trong xu hướng chuyển đổi số mạnh mẽ của các tập đoàn đa ngành quy mô lớn, đào tạo nội bộ đóng vai trò then chốt để duy trì và nâng cao năng lực đội ngũ nhân sự. Với quy mô hàng chục nghìn nhân viên hoạt động tại các trung tâm đào tạo, công ty thành viên của THACO AGRI và THADICO trên toàn quốc, việc quản lý đào tạo thủ công hoặc thiếu tập trung đã bộc lộ nhiều hạn chế về mặt chi phí, hiệu quả và khả năng kiểm soát chất lượng.</p>
+                    <p>Hệ thống quản lý đào tạo trực tuyến <strong>E-Learning Hub</strong> được phát triển nhằm mục tiêu chuẩn hóa, số hóa toàn bộ hoạt động đào tạo tại THACO AGRI và THADICO. Hệ thống cung cấp giải pháp toàn diện từ quản lý học liệu, tổ chức khóa học trực tuyến (Zoom) kết hợp ngoại tuyến (Classroom), ngân hàng câu hỏi, ngân hàng đề thi, cấp chứng chỉ tự động và theo dõi chi phí đào tạo chi tiết cho từng cá nhân, phòng ban.</p>
+                    <p><strong>Mục tiêu của hệ thống:</strong></p>
+                    <ul>
+                        <li>Xây dựng nền tảng học tập trực tuyến linh hoạt, cho phép học viên truy cập nội dung học tập mọi lúc, mọi nơi.</li>
+                        <li>Quản lý, kiểm soát quy trình phê duyệt nghiêm ngặt đối với học liệu và các khóa học trước khi xuất bản.</li>
+                        <li>Hỗ trợ nhiều mô hình học tập kết hợp (Blended Learning): tự học qua tài liệu, học trực tuyến qua Zoom, học trực tiếp trên lớp.</li>
+                        <li>Tự động hóa đánh giá kết quả học tập qua bài thi trực quan và cấp chứng chỉ số theo phôi mẫu của từng đơn vị đào tạo.</li>
+                        <li>Theo dõi, tối ưu hóa ngân sách và chi phí đào tạo thực tế của doanh nghiệp.</li>
+                    </ul>
+                </section>
+
+                <hr>
+
+                <!-- CHƯƠNG 1. THU THẬP YÊU CẦU -->
+                <section id="chuong-1">
+                    <h2>CHƯƠNG 1. THU THẬP YÊU CẦU</h2>
+                    <p>Hoạt động phân tích nghiệp vụ đã làm rõ các yêu cầu về nghiệp vụ đào tạo thực tế tại doanh nghiệp, từ đó phân loại thành các yêu cầu chức năng, tác nhân người dùng, phi chức năng và yêu cầu dữ liệu hệ thống.</p>
+                    
+                    <h3 id="yeu-cau-chuc-nang">1.1.1. Yêu cầu chức năng</h3>
+                    <p>Hệ thống E-Learning Hub bao gồm các nhóm chức năng cốt lõi sau:</p>
+                    
+                    <p><strong>a) Quản lý cơ cấu tổ chức và người dùng (Organization Module):</strong></p>
+                    <ul>
+                        <li><strong>Quản lý Phòng ban (Departments):</strong> Tạo cấu trúc phân nhánh cây phòng ban (Multi-level Departments). Đồng bộ cấu trúc phòng ban từ hệ thống nhân sự tập đoàn.</li>
+                        <li><strong>Quản lý Trung tâm đào tạo (Training Centers):</strong> Quản lý thông tin chi tiết các trung tâm đào tạo trực thuộc, liên kết với địa bàn hành chính (Tỉnh/Thành phố, Quận/Huyện, Xã/Phường).</li>
+                        <li><strong>Quản lý Người dùng (Users):</strong> Quản lý hồ sơ nhân viên, mã nhân viên, chức danh công việc, phòng ban trực thuộc, trung tâm đào tạo quản lý, trạng thái hoạt động.</li>
+                    </ul>
+
+                    <p><strong>b) Quản lý Vai trò và Phân quyền (Role & Permission Management):</strong></p>
+                    <ul>
+                        <li>Hệ thống sử dụng mô hình RBAC (Role-Based Access Control) kết hợp phân quyền nâng cao cho phép:</li>
+                        <li>Tạo vai trò mới (Admin hệ thống, Quản lý đào tạo, Giáo viên, Học viên).</li>
+                        <li>Phân chi tiết quyền hạn truy cập (Xem, Thêm, Sửa, Xóa, Phê duyệt) đối với từng phân hệ: Khóa học, Học liệu, Đề thi, Chứng chỉ.</li>
+                    </ul>
+
+                    <p><strong>c) Quản lý Học liệu (Material Management):</strong></p>
+                    <ul>
+                        <li><strong>Đăng tải học liệu:</strong> Hỗ trợ nhiều định dạng tài liệu (PDF, Video, Slide bài giảng trực tiếp).</li>
+                        <li><strong>Quy trình phê duyệt học liệu:</strong> Trạng thái học liệu được kiểm soát chặt chẽ (Nháp -> Chờ phê duyệt -> Đã duyệt/Hoạt động -> Hết hiệu lực). Cho phép khôi phục học liệu hoặc thiết lập hết hạn dùng.</li>
+                    </ul>
+
+                    <p><strong>d) Ngân hàng câu hỏi và Đề thi (Question & Exam Bank):</strong></p>
+                    <ul>
+                        <li><strong>Ngân hàng câu hỏi:</strong> Quản lý danh mục câu hỏi theo chuyên ngành, chuyên đề, mức độ khó/dễ. Hỗ trợ câu hỏi trắc nghiệm một lựa chọn, nhiều lựa chọn, tự luận, câu hỏi cha-con (mixed questions).</li>
+                        <li><strong>Ngân hàng đề thi (Quizzes):</strong> Thiết lập cấu trúc đề thi, số lượng câu hỏi, thời gian làm bài, điểm đạt (passing score). Hỗ trợ nhân bản đề thi để tái sử dụng.</li>
+                    </ul>
+
+                    <p><strong>e) Quản lý Khóa học (Course Management):</strong></p>
+                    <ul>
+                        <li><strong>Thiết lập khóa học:</strong> Tạo khóa học mới, cấu hình hình thức học (Trực tuyến, Trực tiếp, Tự học hoặc Kết hợp), thiết lập điều kiện học theo thứ tự nội dung.</li>
+                        <li><strong>Quản lý nội dung học tập (Activities):</strong> Cấu trúc khóa học chia thành các nhóm bài học (Session). Mỗi bài học chứa các hoạt động học tập đa dạng (Material - Học liệu, Classroom - Lịch học trực tiếp, Zoom - Học trực tuyến, Test - Bài kiểm tra).</li>
+                        <li><strong>Phê duyệt khóa học:</strong> Quy trình duyệt khóa học trước khi công khai cho học viên đăng ký hoặc chỉ định bắt buộc tham gia.</li>
+                        <li><strong>Nhân bản khóa học:</strong> Sao chép cấu trúc khóa học cũ sang khóa học mới nhanh chóng.</li>
+                    </ul>
+
+                    <p><strong>f) Học tập và Theo dõi tiến trình (Student Portal):</strong></p>
+                    <ul>
+                        <li><strong>Trình phát nội dung học tập (Course Player):</strong> Giao diện học tập tối ưu hỗ trợ học viên xem tài liệu PDF trực tiếp, xem video, tham gia lớp học Zoom trực tiếp và làm bài thi kiểm tra ngay trên hệ thống.</li>
+                        <li><strong>Theo dõi tiến độ học tập (Progress Tracking):</strong> Tự động ghi nhận thời gian học tập, trạng thái hoàn thành từng hoạt động của học viên để tổng hợp tiến độ khóa học (% Course Completion).</li>
+                    </ul>
+
+                    <p><strong>g) Quản lý Phôi và Cấp chứng chỉ (Certificate Management):</strong></p>
+                    <ul>
+                        <li><strong>Quản lý phôi chứng chỉ (Templates):</strong> Thiết kế mẫu chứng chỉ trực quan, định dạng nền, cấu hình chữ chữ ký hiển thị và căn chỉnh thông tin tự động trên phôi chứng chỉ.</li>
+                        <li><strong>Cấp chứng chỉ:</strong> Tự động phát hành chứng chỉ số khi học viên hoàn thành khóa học đạt chuẩn. Hỗ trợ import/upload chứng chỉ ngoài nếu đào tạo từ đơn vị liên kết.</li>
+                    </ul>
+
+                    <p><strong>h) Thiết lập và Theo dõi Chi phí (Cost Setup):</strong></p>
+                    <ul>
+                        <li>Thiết lập chi phí cụ thể cho từng khóa học bao gồm: Chi phí đứng lớp của giảng viên, chi phí học liệu, chi phí cam kết đào tạo đối với từng học viên khi tham gia học tập.</li>
+                    </ul>
+
+                    <h3 id="yeu-cau-nguoi-dung">1.1.2. Yêu cầu về người dùng hệ thống</h3>
+                    <p>Hệ thống phục vụ 3 nhóm đối tượng người dùng chính với nhu cầu tương tác khác nhau:</p>
+                    
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Tác nhân (Actor)</th>
+                                <th>Mô tả</th>
+                                <th>Chức năng chính</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Admin hệ thống</strong></td>
+                                <td>Quản trị viên kỹ thuật toàn hệ thống</td>
+                                <td>Quản lý người dùng, phân quyền nhóm vai trò, đồng bộ phòng ban, thiết lập cấu hình hệ thống, quản lý cơ sở dữ liệu.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Quản lý Đào tạo / Giáo viên</strong></td>
+                                <td>Nhân sự phòng nhân sự/đào tạo của doanh nghiệp</td>
+                                <td>Đăng tải học liệu, soạn thảo câu hỏi/đề thi, thiết lập khóa học, duyệt học viên, theo dõi chi phí, phê duyệt tài liệu, chấm thi tự luận.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Học viên (Nhân viên)</strong></td>
+                                <td>Cán bộ nhân viên tập đoàn cần tham gia đào tạo</td>
+                                <td>Đăng ký khóa học, xem tài liệu bài học, tham gia lớp học trực tuyến qua Zoom, điểm danh lớp offline, làm bài thi kiểm tra, nhận chứng chỉ số.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h3 id="yeu-cau-phi-chuc-nang">1.1.3. Yêu cầu phi chức năng</h3>
+                    <ul>
+                        <li><strong>Kiến trúc Đa cơ sở dữ liệu (Multi-Database):</strong> Để đáp ứng tải dữ liệu lớn và phân tách nghiệp vụ rõ ràng, hệ thống được cấu hình phân tán trên 4 cơ sở dữ liệu PostgreSQL độc lập:
+                            <ul>
+                                <li><code>organization-db</code>: Lưu trữ thông tin nhân sự, phòng ban, phân quyền Spatie.</li>
+                                <li><code>learning-db</code>: Lưu trữ cấu trúc khóa học, học liệu, hoạt động giảng dạy, chứng chỉ.</li>
+                                <li><code>exam-db</code>: Lưu trữ ngân hàng câu hỏi, đề thi và lịch sử làm bài thi.</li>
+                                <li><code>utility-db</code>: Lưu trữ file tải lên, thông báo, nhật ký hành động (action logs), email.</li>
+                            </ul>
+                        </li>
+                        <li><strong>Bảo mật hệ thống:</strong> Xác thực và phân quyền API bằng cơ chế JWT token (Laravel Sanctum). Tất cả mật khẩu người dùng phải được mã hóa bằng chuẩn Argon2 hoặc BCrypt.</li>
+                        <li><strong>Hiệu năng xử lý:</strong> Thời gian phản hồi API trung bình dưới 300ms. Sử dụng cơ chế SWR (Stale-While-Revalidate) phía Frontend để lưu trữ đệm dữ liệu tạm thời, hạn chế truy vấn API trùng lặp lên máy chủ.</li>
+                        <li><strong>Khả dụng và Tương thích:</strong> Giao diện responsive trên các trình duyệt Desktop và thiết bị di động.</li>
+                        <li><strong>Đồng bộ dữ liệu:</strong> Khả năng đồng bộ hóa không đồng bộ (Asynchronous Sync) dữ liệu nhân sự và phòng ban từ hệ thống tổng của THACO AGRI.</li>
+                    </ul>
+
+                    <h3 id="yeu-cau-du-lieu">1.1.4. Yêu cầu về dữ liệu</h3>
+                    <ul>
+                        <li><strong>Tính toàn vẹn dữ liệu:</strong> Tất cả các thực thể nghiệp vụ phải thừa kế cơ chế lưu trữ Audit trail (ghi nhận thời điểm tạo, chỉnh sửa và người thực hiện tác vụ).</li>
+                        <li><strong>Xóa mềm (Soft Delete):</strong> Đảm bảo an toàn thông tin, không xóa trực tiếp bản ghi khỏi DB vật lý khi người dùng thực hiện thao tác "Xóa" trên giao diện (sử dụng thuộc tính <code>deleted_at</code>).</li>
+                        <li><strong>Quản lý tệp tin tập trung:</strong> Hỗ trợ lưu trữ đa phương tiện (PDF, MP4, JPEG) thông qua hệ thống lưu trữ tập trung (MinIO hoặc S3), thông tin tệp tin được quản lý tại bảng <code>files</code> của DB Utility.</li>
+                    </ul>
+
+                    <h3 id="bieu-do-use-case">1.2. Biểu đồ use case</h3>
+                    <p><strong>1.2.1. Biểu đồ use case tổng quát:</strong></p>
+                    <div class="diagram-container">
+                        <div class="mermaid">
+                        flowchart TD
+                            subgraph Tác nhân
+                                admin[Admin Hệ thống]
+                                manager[Quản lý Đào tạo]
+                                student[Học viên / Nhân viên]
+                            end
+                            subgraph Chức năng E-Learning Hub
+                                UC01(Đăng nhập hệ thống JWT)
+                                UC02(Quản lý phòng ban & Người dùng)
+                                UC03(Phân quyền & Vai trò Spatie)
+                                UC04(Đăng tải & Phê duyệt Học liệu)
+                                UC05(Ngân hàng Câu hỏi & Đề thi)
+                                UC06(Thiết lập & Phê duyệt Khóa học)
+                                UC07(Xem tài liệu & Bài học Zoom)
+                                UC08(Làm bài thi trắc nghiệm)
+                                UC09(Cấp chứng chỉ tự động)
+                                UC10(Thiết lập chi phí đào tạo)
+                            end
+                            admin --> UC01
+                            admin --> UC02
+                            admin --> UC03
+                            
+                            manager --> UC01
+                            manager --> UC04
+                            manager --> UC05
+                            manager --> UC06
+                            manager --> UC09
+                            manager --> UC10
+                            
+                            student --> UC01
+                            student --> UC07
+                            student --> UC08
+                            student --> UC09
+                        </div>
+                    </div>
+
+                    <p><strong>1.2.2. Biểu đồ use case phân rã Phân hệ Khóa học & Học tập:</strong></p>
+                    <div class="diagram-container">
+                        <div class="mermaid">
+                        flowchart TD
+                            subgraph Quản lý Đào tạo
+                                UC_C1(Tạo khóa học mới)
+                                UC_C2(Thêm hoạt động: Zoom/Tài liệu)
+                                UC_C3(Thiết lập chi phí cam kết)
+                                UC_C4(Gửi yêu cầu phê duyệt)
+                            end
+                            subgraph Học viên
+                                UC_L1(Học tập: Xem PDF/Video)
+                                UC_L2(Tham gia lớp học trực tuyến Zoom)
+                                UC_L3(Thực hiện làm bài kiểm tra)
+                                UC_L4(Tự động nhận chứng chỉ số)
+                            end
+                            UC_L4 -.-> |include| UC_L3
+                        </div>
+                    </div>
+
+                    <p><strong>Bảng mô tả Use Case chi tiết — UC04: Học tập và làm bài kiểm tra:</strong></p>
+                    <table>
+                        <tr>
+                            <td width="30%"><strong>Tên Use Case</strong></td>
+                            <td>UC04 — Học tập và làm bài kiểm tra</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Tác nhân</strong></td>
+                            <td>Học viên (Nhân viên)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Mô tả</strong></td>
+                            <td>Học viên tiến hành xem nội dung bài học trong trình phát và hoàn thành bài thi trắc nghiệm đánh giá.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Điều kiện tiên quyết</strong></td>
+                            <td>Học viên đã được ghi danh (Enrollment) vào khóa học.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Luồng chính</strong></td>
+                            <td>
+                                1. Học viên vào "Khóa học của tôi" -> chọn khóa học đang diễn ra.<br>
+                                2. Nhấp vào các hoạt động (Xem tài liệu PDF hoặc xem video). Hệ thống ghi nhận tiến trình học tập.<br>
+                                3. Nhấp vào bài kiểm tra (Test/Examination) -> "Bắt đầu làm bài".<br>
+                                4. Trả lời các câu hỏi trắc nghiệm trong thời gian đếm ngược.<br>
+                                5. Nhấn "Nộp bài". Hệ thống chấm điểm tự động dựa trên đáp án ngân hàng câu hỏi.<br>
+                                6. Hiển thị kết quả đạt/không đạt ngay lập tức.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Luồng thay thế</strong></td>
+                            <td>
+                                4a. Hết thời gian làm bài -> Hệ thống tự động nộp bài thi của học viên.<br>
+                                5a. Bài thi có câu hỏi tự luận -> Trạng thái bài thi là "Chờ chấm điểm" cho đến khi giáo viên chấm bài.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Kết quả</strong></td>
+                            <td>Hệ thống lưu kết quả thi (Score, Correct Count) vào bảng <code>quiz_attempts</code>.</td>
+                        </tr>
+                    </table>
+                </section>
+
+                <hr>
+
+                <!-- CHƯƠNG 2. PHÂN TÍCH -->
+                <section id="chuong-2">
+                    <h2>CHƯƠNG 2. PHÂN TÍCH</h2>
+                    
+                    <h3 id="the-crc">2.1. Các thẻ CRC</h3>
+                    <p>Các lớp nghiệp vụ then chốt trong hệ thống được định nghĩa qua các thẻ CRC:</p>
+                    
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Lớp (Class)</th>
+                                <th>Trách nhiệm (Responsibilities)</th>
+                                <th>Cộng tác (Collaborators)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>User</strong></td>
+                                <td>
+                                    - Lưu trữ thông tin nhân viên, email, mã nhân viên.<br>
+                                    - Xác thực truy cập và liên kết vai trò của hệ thống.<br>
+                                    - Liên kết với phòng ban và trung tâm đào tạo.
+                                </td>
+                                <td>Department, Role, Enrollment, QuizAttempt</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Course</strong></td>
+                                <td>
+                                    - Quản lý thông tin chung khóa học (Thời gian bắt đầu, kết thúc, chi phí).<br>
+                                    - Liên kết các hoạt động học tập.<br>
+                                    - Quản lý học viên đăng ký tham gia.
+                                </td>
+                                <td>Activity, Enrollment, TrainingCenter</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Activity</strong></td>
+                                <td>
+                                    - Đại diện cho một hoạt động học tập (Slide, Zoom, Lịch học, Bài thi).<br>
+                                    - Quản lý vị trí bài học hiển thị cho học viên.<br>
+                                    - Theo dõi tiến độ hoàn thành hoạt động.
+                                </td>
+                                <td>Course, Material, Quiz, ActivityProgress</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h3 id="bieu-do-lop">2.2. Biểu đồ lớp (Class Diagram)</h3>
+                    <p>Biểu đồ lớp dưới đây thể hiện cấu trúc tĩnh và mối liên kết logic giữa các Model Laravel thuộc các database khác nhau:</p>
+                    <div class="diagram-container">
+                        <div class="mermaid">
+                        classDiagram
+                            class User {
+                                +int id
+                                +string name
+                                +string email
+                                +string employee_code
+                                +int department_id
+                                +int role_id
+                                +userStatus()
+                                +role()
+                            }
+                            class Department {
+                                +int id
+                                +string name
+                                +string code
+                                +int parent_id
+                            }
+                            class Course {
+                                +int id
+                                +string name
+                                +string status
+                                +int training_center_id
+                                +float course_costs
+                                +activities()
+                                +enrollments()
+                            }
+                            class Activity {
+                                +int id
+                                +int course_id
+                                +string name
+                                +string type
+                                +int model_id
+                                +string model_type
+                            }
+                            class Enrollment {
+                                +int id
+                                +int course_id
+                                +int user_id
+                                +string status
+                            }
+                            class Certificate {
+                                +int id
+                                +int user_id
+                                +int course_id
+                                +string code
+                            }
+                            User "1" --> "1" Department
+                            User "1" --> "N" Enrollment
+                            Course "1" --> "N" Enrollment
+                            Course "1" --> "N" Activity
+                            Enrollment "1" --> "N" Certificate
+                        </div>
+                    </div>
+
+                    <h3 id="bieu-do-tuan-tu">2.3. Biểu đồ tuần tự</h3>
+                    <p><strong>Luồng 1: Tiến trình học viên làm bài kiểm tra trắc nghiệm (Quiz Taking):</strong></p>
+                    <div class="diagram-container">
+                        <div class="mermaid">
+                        sequenceDiagram
+                            autonumber
+                            actor HocVien as Học viên
+                            participant FE as React Website (Frontend)
+                            participant BE as Laravel API (Backend)
+                            participant DB_Exam as PostgreSQL (exam-db)
+                            participant DB_Learn as PostgreSQL (learning-db)
+
+                            HocVien->>FE: Bấm "Bắt đầu làm bài"
+                            FE->>BE: POST /api/quizzes/{id}/attempts (JWT)
+                            BE->>DB_Exam: Khởi tạo QuizAttempt (in_progress)
+                            DB_Exam-->>BE: Trả về attempt_id
+                            BE->>DB_Exam: Lấy danh sách câu hỏi & xáo trộn đáp án
+                            DB_Exam-->>BE: Danh sách câu hỏi
+                            BE-->>FE: Trả về cấu trúc đề thi
+                            FE->>HocVien: Hiển thị giao diện làm bài & đếm ngược
+
+                            HocVien->>FE: Chọn câu trả lời & Nộp bài
+                            FE->>BE: POST /api/quizzes/attempts/{attempt_id}/submit (đáp án)
+                            BE->>DB_Exam: Lấy đáp án đúng & Tính toán điểm
+                            BE->>DB_Exam: Cập nhật QuizAttempt (score, submitted)
+                            
+                            alt Nếu Điểm Số >= Điểm Đạt
+                                BE->>DB_Learn: Cập nhật ActivityProgress (completed)
+                            end
+
+                            BE-->>FE: Kết quả thi (Đạt/Không đạt, Điểm số)
+                            FE->>HocVien: Hiển thị kết quả chi tiết
+                        </div>
+                    </div>
+
+                    <h3 id="xac-dinh-thuc-the">2.4.1. Xác định các thực thể và thuộc tính</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Bảng dữ liệu</th>
+                                <th>Thuộc tính chính</th>
+                                <th>Kiểu dữ liệu</th>
+                                <th>Mô tả</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong><code>users</code></strong></td>
+                                <td>id, name, email, employee_code, password, department_id, status</td>
+                                <td>BIGINT (PK), VARCHAR, VARCHAR, VARCHAR, VARCHAR, INT, VARCHAR</td>
+                                <td>Lưu trữ hồ sơ nhân sự của nhân viên tập đoàn.</td>
+                            </tr>
+                            <tr>
+                                <td><strong><code>courses</code></strong></td>
+                                <td>id, name, status, form_of_learning, start, end, training_center_id</td>
+                                <td>BIGINT (PK), VARCHAR, VARCHAR, VARCHAR, TIMESTAMP, TIMESTAMP, INT</td>
+                                <td>Lưu trữ thông tin khóa học và hình thức đào tạo.</td>
+                            </tr>
+                            <tr>
+                                <td><strong><code>activities</code></strong></td>
+                                <td>id, course_id, name, type, model_id, model_type, position</td>
+                                <td>BIGINT (PK), BIGINT (FK), VARCHAR, VARCHAR, BIGINT, VARCHAR, INT</td>
+                                <td>Các hoạt động học tập đa hình trong bài giảng.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h3 id="erd-schema">2.4.2. Sơ đồ cơ sở dữ liệu quan hệ (ERD)</h3>
+                    <div class="diagram-container">
+                        <div class="mermaid">
+                        erDiagram
+                            DEPARTMENTS ||--o{ USERS : "chứa"
+                            USERS ||--o{ ENROLLMENTS : "đăng ký học"
+                            COURSES ||--o{ ENROLLMENTS : "gồm danh sách"
+                            COURSES ||--o{ ACTIVITIES : "chứa nội dung"
+                            ACTIVITIES ||--o| MATERIALS : "liên kết polymorphic"
+                            ACTIVITIES ||--o| QUIZZES : "liên kết polymorphic"
+                            USERS ||--o{ CERTIFICATES : "sở hữu"
+                        </div>
+                    </div>
+                </section>
+
+                <hr>
+
+                <!-- CHƯƠNG 3. THIẾT KẾ HỆ THỐNG -->
+                <section id="chuong-3">
+                    <h2>CHƯƠNG 3. THIẾT KẾ HỆ THỐNG</h2>
+                    
+                    <h3 id="kien-truc-tong-quan">3.1. Kiến trúc tổng quan của hệ thống</h3>
+                    <p>Hệ thống được xây dựng theo mô hình Client-Server 3 tầng phi trạng thái:</p>
+                    <ul>
+                        <li><strong>Tầng giao diện (React SPA):</strong> Xử lý toàn bộ logic hiển thị, lưu trữ JWT Token phía client, tương tác mượt mà thông qua thư viện UI tùy biến.</li>
+                        <li><strong>Tầng logic API (Laravel):</strong> Đóng vai trò làm Gateway tiếp nhận dữ liệu xác thực, xử lý các logic nghiệp vụ thông qua cấu trúc phân chia Module độc lập.</li>
+                        <li><strong>Tầng dữ liệu (PostgreSQL):</strong> Lưu trữ dữ liệu phân tán ở 4 cơ sở dữ liệu độc lập, điều phối qua cấu hình kết nối động.</li>
+                    </ul>
+
+                    <h3 id="kien-truc-phan-mem">3.2. Kiến trúc phần mềm</h3>
+                    <p><strong>Cấu trúc thư mục Backend (Laravel Modules):</strong></p>
+                    <p>Phần mềm backend sử dụng cấu trúc Modular Monolith để chia rõ trách nhiệm các phân hệ nghiệp vụ chính:</p>
+                    <ul>
+                        <li><code>Modules/Organization/</code>: Chứa logic nghiệp vụ liên quan đến người dùng, phòng ban, và trung tâm đào tạo.</li>
+                        <li><code>Modules/Learning/</code>: Chứa logic khóa học, hoạt động học tập, lớp học trực tiếp, Zoom và chứng chỉ.</li>
+                        <li><code>Modules/Exam/</code>: Chứa logic ngân hàng đề thi, câu hỏi và tiến trình làm bài.</li>
+                        <li><code>Modules/Utility/</code>: Chứa các tiện ích dùng chung như lưu trữ tệp tin tập trung, gửi thông báo email, tin nhắn SMS.</li>
+                    </ul>
+
+                    <h3 id="thiet-ke-db">3.3. Thiết kế cơ sở dữ liệu</h3>
+                    <p>Cấu hình đa kết nối cơ sở dữ liệu động được định nghĩa trong Laravel thông qua tệp tin cấu hình <code>config/database.php</code>:</p>
+                    
+                    <pre><code>// config/database.php
+return [
+    'connections' => [
+        'organization-db' => [
+            'driver' => 'pgsql',
+            'host' => env('DB_ORGANIZATION_HOST', '127.0.0.1'),
+            'database' => env('DB_ORGANIZATION_DATABASE', 'e_learning_organization'),
+            'username' => env('DB_ORGANIZATION_USERNAME', 'postgres'),
+            'password' => env('DB_ORGANIZATION_PASSWORD', ''),
+        ],
+        'learning-db' => [
+            'driver' => 'pgsql',
+            'host' => env('DB_LEARNING_HOST', '127.0.0.1'),
+            'database' => env('DB_LEARNING_DATABASE', 'e_learning_learning'),
+            'username' => env('DB_LEARNING_USERNAME', 'postgres'),
+            'password' => env('DB_LEARNING_PASSWORD', ''),
+        ],
+        'exam-db' => [
+            'driver' => 'pgsql',
+            'host' => env('DB_EXAM_HOST', '127.0.0.1'),
+            'database' => env('DB_EXAM_DATABASE', 'e_learning_exam'),
+            'username' => env('DB_EXAM_USERNAME', 'postgres'),
+            'password' => env('DB_EXAM_PASSWORD', ''),
+        ]
+    ]
+];</code></pre>
+
+                    <h3 id="thiet-ke-ui">3.4. Thiết kế giao diện</h3>
+                    <p>Các màn hình chính trên website được xây dựng đồng bộ:</p>
+                    <ul>
+                        <li><strong>Dashboard học tập:</strong> Hiển thị % tiến độ các khóa học đang diễn ra, thời khóa biểu các lớp học trực tuyến sắp tới và danh sách thông báo mới nhất.</li>
+                        <li><strong>Trình phát học tập (Course Player):</strong> Tích hợp khung đọc PDF trực tiếp, xem video lưu trữ chất lượng cao, hiển thị cây mục lục bài học bên trái hỗ trợ học viên chuyển bài nhanh.</li>
+                        <li><strong>Trang chấm thi tự luận:</strong> Dành cho giáo viên, hỗ trợ hiển thị bài nộp tự luận của học sinh, so sánh với đáp án gợi ý và nhập điểm đánh giá trực quan.</li>
+                    </ul>
+                </section>
+
+                <hr>
+
+                <!-- CHƯƠNG 4. TRIỂN KHAI VÀ KIỂM THỬ -->
+                <section id="chuong-4">
+                    <h2>CHƯƠNG 4. TRIỂN KHAI VÀ KIỂM THỬ</h2>
+                    
+                    <h3 id="cong-nghe-su-dung">4.1. Các công nghệ sử dụng</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Công nghệ</th>
+                                <th>Phiên bản</th>
+                                <th>Mô tả / Vai trò</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>PHP / Laravel</td>
+                                <td>PHP 8.2 / Laravel 10.x</td>
+                                <td>Xây dựng nền tảng API, quản lý xác thực Sanctum, lập lịch tác vụ nền và kết nối DB động.</td>
+                            </tr>
+                            <tr>
+                                <td>ReactJS</td>
+                                <td>React 18</td>
+                                <td>Xây dựng ứng dụng SPA (Single Page Application) mượt mà cho học viên và quản trị viên.</td>
+                            </tr>
+                            <tr>
+                                <td>PostgreSQL</td>
+                                <td>PostgreSQL 15</td>
+                                <td>Lưu trữ dữ liệu có cấu trúc, xử lý chỉ mục và bảo mật tốt.</td>
+                            </tr>
+                            <tr>
+                                <td>Docker / Compose</td>
+                                <td>Docker v24</td>
+                                <td>Đóng gói và triển khai nhanh chóng các dịch vụ lên máy chủ thử nghiệm.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h3 id="kiem-thu">4.3. Kiểm thử hệ thống</h3>
+                    <p>Hệ thống đã trải qua quy trình kiểm thử chất lượng nghiêm ngặt:</p>
+                    <ul>
+                        <li><strong>Kiểm thử chức năng:</strong> Kiểm tra độ chính xác của luồng đăng ký học, ghi nhận đúng tiến trình học tập khi học viên hoàn thành tệp tin PDF/Video và tự động kích hoạt tạo chứng chỉ số PDF.</li>
+                        <li><strong>Kiểm thử bảo mật:</strong> Đảm bảo các API cập nhật khóa học, tạo đề thi, thay đổi điểm số học viên yêu cầu token JWT hợp lệ và quyền quản trị phù hợp.</li>
+                        <li><strong>Kiểm thử hiệu năng:</strong> Sử dụng công cụ đo tải giả lập 1000 requests/giây truy cập đồng thời làm bài thi trắc nghiệm. Hệ thống duy trì thời gian phản hồi ổn định dưới 400ms nhờ cơ chế tối ưu kết nối Postgres.</li>
+                    </ul>
+                </section>
+
+                <hr>
+
+                <!-- PHẦN KẾT LUẬN -->
+                <section id="ket-luan">
+                    <h2>PHẦN KẾT LUẬN</h2>
+                    <p>Đồ án phân tích thiết kế và xây dựng Hệ thống quản lý đào tạo trực tuyến <strong>E-Learning Hub</strong> cho Tập đoàn THACO AGRI và Công ty THADICO đã hoàn thành đầy đủ các mục tiêu đề ra:</p>
+                    <p><strong>Kết quả đạt được:</strong></p>
+                    <ol>
+                        <li>Phân tích chi tiết quy trình nghiệp vụ đào tạo doanh nghiệp và xây dựng hoàn chỉnh tài liệu thiết kế hệ thống (Use Case, CRC Cards, Class Diagram, ERD).</li>
+                        <li>Triển khai kiến trúc Đa cơ sở dữ liệu (Multi-Database) hoạt động ổn định trên môi trường Laravel và PostgreSQL, giải quyết bài toán tải dữ liệu lớn.</li>
+                        <li>Xây dựng Frontend ReactJS hiện đại, sử dụng cơ chế SWR caching nâng cao trải nghiệm người dùng học tập mượt mà.</li>
+                        <li>Tự động hóa quy trình theo dõi tiến độ, thi đánh giá năng lực và cấp phát chứng chỉ số nhanh chóng, chính xác.</li>
+                        <li>Kiểm soát tốt chi phí, ngân sách đầu tư đào tạo nội bộ của doanh nghiệp.</li>
+                    </ol>
+                    <p><strong>Hướng phát triển trong tương lai:</strong></p>
+                    <ul>
+                        <li>Xây dựng ứng dụng di động (Mobile App) trên nền tảng React Native để hỗ trợ học tập Offline (Tải tài liệu học khi không có kết nối Internet).</li>
+                        <li>Tích hợp AI (Trí tuệ nhân tạo) để phân tích hành vi học tập, gợi ý khóa học phù hợp với định hướng phát triển nghề nghiệp của từng nhân viên.</li>
+                        <li>Tích hợp giải pháp Video Streaming chuyên sâu (AWS MediaConvert) để mã hóa video học liệu chống sao chép và tải video nhanh hơn.</li>
+                    </ul>
+                </section>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- Script for Dynamic Controls -->
+    <script>
+        // Theme Toggle (Dark/Light Mode)
+        const themeBtn = document.getElementById('themeBtn');
+        const body = document.body;
+
+        // Check persistent storage for theme preference
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        body.setAttribute('data-theme', savedTheme);
+        updateThemeIcon(savedTheme);
+
+        themeBtn.addEventListener('click', () => {
+            const currentTheme = body.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            body.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateThemeIcon(newTheme);
+        });
+
+        function updateThemeIcon(theme) {
+            const icon = themeBtn.querySelector('i');
+            if (theme === 'dark') {
+                icon.className = 'fa-solid fa-sun';
+                themeBtn.setAttribute('title', 'Chuyển chế độ Sáng');
+            } else {
+                icon.className = 'fa-solid fa-moon';
+                themeBtn.setAttribute('title', 'Chuyển chế độ Tối');
+            }
+        }
+
+        // Search Filter Logic
+        const searchInput = document.getElementById('searchInput');
+        const navLinks = document.querySelectorAll('.nav-link');
+        const sections = document.querySelectorAll('section, h3, h2');
+
+        searchInput.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase().trim();
+            
+            navLinks.forEach(link => {
+                const text = link.textContent.toLowerCase();
+                const parentLi = link.parentElement;
+                if (text.includes(query)) {
+                    parentLi.style.display = 'block';
+                } else {
+                    parentLi.style.display = 'none';
+                }
+            });
+        });
+
+        // Scrollspy & Active Navigation Link Update
+        const observerOptions = {
+            root: null,
+            rootMargin: '-80px 0px -60% 0px',
+            threshold: 0
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.getAttribute('id');
+                    if (id) {
+                        navLinks.forEach(link => {
+                            if (link.getAttribute('href') === `#${id}`) {
+                                link.classList.add('active');
+                                // Scroll nav link into view in sidebar if hidden
+                                link.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                            } else {
+                                link.classList.remove('active');
+                            }
+                        });
+                    }
+                }
+            });
+        }, observerOptions);
+
+        // Track main sections
+        document.querySelectorAll('section').forEach(section => {
+            observer.observe(section);
+        });
+    </script>
+</body>
+</html>
