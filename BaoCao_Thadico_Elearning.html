@@ -484,7 +484,7 @@
             }
 
             .document-wrapper {
-                box-shadow: none !important;
+                box-shadow: none !important;    
                 padding: 0 !important;
                 background-color: transparent !important;
                 max-width: 100% !important;
@@ -1122,14 +1122,52 @@ return [
                         </tbody>
                     </table>
 
-                    <h3 id="kiem-thu">4.3. Kiểm thử hệ thống</h3>
-                    <p>Hệ thống đã trải qua quy trình kiểm thử chất lượng nghiêm ngặt:</p>
+                    <h3 id="kiem-thu">4.3. Kiểm thử và Giám sát hệ thống (System Testing &amp; Monitoring)</h3>
+                    <p>Để đảm bảo độ tin cậy cao của hệ thống E-Learning Hub hoạt động trên môi trường Dockerized đa dịch vụ, quy trình kiểm thử và giám sát được thiết kế toàn diện từ tầng mã nguồn, tầng giao diện người dùng đến tầng cơ sở hạ tầng mạng.</p>
+
+                    <h4>4.3.1. Kiểm thử Đơn vị &amp; Tích hợp (Unit &amp; Integration Testing với PHPUnit)</h4>
+                    <p>Phân hệ Backend Laravel sử dụng framework <strong>PHPUnit</strong> để tự động hóa kiểm thử:</p>
                     <ul>
-                        <li><strong>Kiểm thử chức năng:</strong> Kiểm tra độ chính xác của luồng đăng ký học, ghi nhận đúng tiến trình học tập khi học viên hoàn thành tệp tin PDF/Video và tự động kích hoạt tạo chứng chỉ số PDF.</li>
-                        <li><strong>Kiểm thử bảo mật:</strong> Đảm bảo các API cập nhật khóa học, tạo đề thi, thay đổi điểm số học viên yêu cầu token JWT hợp lệ và quyền quản trị phù hợp.</li>
-                        <li><strong>Kiểm thử hiệu năng:</strong> Sử dụng công cụ đo tải giả lập 1000 requests/giây truy cập đồng thời làm bài thi trắc nghiệm. Hệ thống duy trì thời gian phản hồi ổn định dưới 400ms nhờ cơ chế tối ưu kết nối Postgres.</li>
+                        <li><strong>Unit Tests (Kiểm thử đơn vị):</strong> Kiểm tra các hàm cô lập như thuật toán tính điểm thi trắc nghiệm tại <code>Modules/Exam/Services/QuizGradeCalculator.php</code>, định dạng mã số chứng chỉ tự động, và các bộ lọc phân quyền vai trò.</li>
+                        <li><strong>Integration Tests (Kiểm thử tích hợp):</strong> Kiểm thử sự phối hợp giữa nhiều thành phần như kết nối động cơ sở dữ liệu (Dynamic Database Connection Switcher) giữa 4 databases độc lập tùy theo phân hệ của request, luồng đăng tải tệp tin lên bộ lưu trữ tập trung (MinIO/S3), và kiểm tra việc kích hoạt sự kiện gửi Email thông báo tự động.</li>
+                        <li>Sử dụng cơ chế Mocking để giả lập phản hồi từ dịch vụ Zoom API hoặc Mail server ngoài nhằm tránh làm chậm tiến độ chạy test.</li>
                     </ul>
-                </section>
+
+                    <h4>4.3.2. Kiểm thử Tự động hóa Giao diện (End-to-End Testing với Playwright)</h4>
+                    <p>Phần Frontend ReactJS được kiểm thử tự động bằng công cụ <strong>Playwright</strong> để giả lập hành vi của người dùng thực tế trên nhiều trình duyệt khác nhau (Chromium, Firefox, WebKit):</p>
+                    <ul>
+                        <li><strong>Luồng đăng nhập &amp; Phân quyền:</strong> Giả lập các tài khoản Admin, Manager, Student đăng nhập hệ thống, kiểm tra xem giao diện có ẩn/hiển thị đúng các chức năng theo vai trò quy định.</li>
+                        <li><strong>Trình phát học liệu &amp; Ghi nhận tiến độ:</strong> Giả lập học viên click mở một tệp tài liệu PDF, chạy video bài học và kiểm tra xem sau khi hoàn thành, hệ thống có tự động kích hoạt gửi request API cập nhật trạng thái hoạt động (Completed) và hiển thị thanh tiến trình 100% hay không.</li>
+                        <li><strong>Nộp bài kiểm tra:</strong> Giả lập luồng học viên chọn ngẫu nhiên các đáp án của Quiz, nhấn nộp bài và kiểm tra độ chính xác của màn hình kết quả điểm.</li>
+                    </ul>
+
+                    <h4>4.3.3. Kiểm thử Hiệu năng &amp; Tải (Performance Testing với Apache JMeter)</h4>
+                    <p>Sử dụng công cụ <strong>Apache JMeter</strong> để giả lập các kịch bản chịu tải đột biến (Traffic Spikes) trong các đợt thi đánh giá năng lực tập trung của tập đoàn:</p>
+                    <ul>
+                        <li><strong>Kịch bản:</strong> Giả lập 1.000 học viên ảo truy cập đồng thời làm bài thi trắc nghiệm và gửi yêu cầu nộp bài <code>POST /api/quizzes/attempts/{id}/submit</code> trong cùng một giây.</li>
+                        <li><strong>Chỉ số đo lường:</strong> Đo lường thời gian phản hồi trung bình (Response Time &lt; 400ms), thông lượng hệ thống (Throughput - Transactions Per Second), tỉ lệ lỗi request (Error Rate = 0%), và theo dõi ngưỡng chịu tải giới hạn của PostgreSQL connection pool (tối đa 100 kết nối hoạt động liên tục).</li>
+                    </ul>
+
+                    <h4>4.3.4. Giám sát &amp; Dò vết Phân tán trong Docker (Distributed Monitoring &amp; Overlay Tracking)</h4>
+                    <p>Do hệ thống được phát triển và vận hành dưới dạng các Container trong Docker, việc theo dõi luồng dữ liệu (traffic) giữa các container (React, Nginx, Laravel, PostgreSQL, MinIO, Redis, MailHog) là vô cùng quan trọng. Hệ thống tích hợp các công cụ giám sát hiện đại:</p>
+                    <ul>
+                        <li><strong>Giám sát Hệ thống (Prometheus &amp; Grafana):</strong> 
+                            <ul>
+                                <li><strong>cAdvisor:</strong> Thu thập dữ liệu sử dụng tài nguyên (CPU, RAM, Network I/O) trực tiếp của từng Container trong Docker network.</li>
+                                <li><strong>Node Exporter:</strong> Giám sát các chỉ số phần cứng của máy chủ host chạy Docker.</li>
+                                <li><strong>PostgreSQL Exporter:</strong> Giám sát số lượng kết nối đang mở, truy vấn chậm (slow queries), và dung lượng các DB phân tán.</li>
+                                <li><strong>Grafana Dashboard:</strong> Trực quan hóa dữ liệu thu thập được từ Prometheus thành biểu đồ trực quan, giúp phát hiện sớm các hiện tượng nghẽn cổ chai (Bottlenecks) ở container Laravel API hoặc PostgreSQL.</li>
+                            </ul>
+                        </li>
+                        <li><strong>Theo dõi lỗi Thời gian thực (Sentry APM):</strong> Sentry được cấu hình trên cả Frontend (ReactJS) để bắt các lỗi runtime javascript, và Backend (Laravel) để bắt các lỗi ngoại lệ (Exceptions) chưa được xử lý, từ đó gửi cảnh báo lỗi ngay lập tức kèm theo stack trace chi tiết.</li>
+                        <li><strong>Dò vết Phân tán &amp; Giám sát Traffic (Overlay Tracking / Distributed Tracing):</strong>
+                            <ul>
+                                <li>Sử dụng <strong>OpenTelemetry</strong> kết hợp với <strong>Jaeger</strong> để theo dõi vòng đời của một request đi qua các ranh giới mạng của các Container.</li>
+                                <li>Khi học viên gửi một request, một <code>trace_id</code> duy nhất được sinh ra từ React, truyền qua Nginx reverse proxy, đi vào Laravel API container, và tiếp tục truyền đến các câu lệnh truy vấn SQL sang <code>learning-db</code> hoặc <code>exam-db</code>.</li>
+                                <li>Nhờ vậy, quản trị viên có thể theo dõi chính xác thời gian xử lý của request tại từng container trung gian, cô lập nguyên nhân gây chậm trễ hệ thống (ví dụ: do trễ mạng giữa container Laravel và Postgres hay do câu lệnh SQL chưa được tối ưu hóa).</li>
+                            </ul>
+                        </li>
+                    </ul>
 
                 <hr>
 
