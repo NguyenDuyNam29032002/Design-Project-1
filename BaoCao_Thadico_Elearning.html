@@ -457,6 +457,14 @@
             height: auto !important;
         }
 
+        .diagram-img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+            border-radius: 4px;
+        }
+
         /* Divider */
         hr {
             border: none;
@@ -769,24 +777,55 @@
                         </div>
                     </div>
 
-                    <p><strong>1.2.2. Biểu đồ use case phân rã Phân hệ Khóa học & Học tập:</strong></p>
+                    <p><strong>1.2.2. Biểu đồ use case phân rã các phân hệ nghiệp vụ:</strong></p>
+                    <p>Dưới đây là biểu đồ Use Case chi tiết cho từng phân hệ chức năng cốt lõi của hệ thống E-Learning Hub:</p>
+
+                    <h5>a) Phân hệ Quản lý Tổ chức &amp; Người dùng</h5>
+                    <p>Phân hệ này cho phép Admin hệ thống quản lý cơ cấu tổ chức phòng ban theo mô hình cây phân cấp nhiều tầng và thực hiện đồng bộ hóa hồ sơ người dùng, mã nhân viên trực tiếp từ hệ thống quản lý nhân sự tập đoàn của THACO AGRI.</p>
                     <div class="diagram-container">
-                        <div class="mermaid">
-                        flowchart TD
-                            subgraph Quản lý Đào tạo
-                                UC_C1(Tạo khóa học mới)
-                                UC_C2(Thêm hoạt động: Zoom/Tài liệu)
-                                UC_C3(Thiết lập chi phí cam kết)
-                                UC_C4(Gửi yêu cầu phê duyệt)
-                            end
-                            subgraph Học viên
-                                UC_L1(Học tập: Xem PDF/Video)
-                                UC_L2(Tham gia lớp học trực tuyến Zoom)
-                                UC_L3(Thực hiện làm bài kiểm tra)
-                                UC_L4(Tự động nhận chứng chỉ số)
-                            end
-                            UC_L4 -.-> |include| UC_L3
-                        </div>
+                        <img src="images/PlantUML Diagram.png" alt="Use Case Quản lý Tổ chức &amp; Người dùng" class="diagram-img">
+                    </div>
+
+                    <h5>b) Phân hệ Vai trò &amp; Phân quyền (RBAC)</h5>
+                    <p>Hệ thống cho phép cấu hình phân quyền chi tiết cho từng chức năng (Thêm, Sửa, Xóa, Phê duyệt) gắn liền với từng phân hệ nghiệp vụ (Khóa học, Học liệu, Đề thi, Chứng chỉ) và gán vai trò tương ứng cho người dùng.</p>
+                    <div class="diagram-container">
+                        <img src="images/PlantUML Diagram (1).png" alt="Use Case Vai trò &amp; Phân quyền (RBAC)" class="diagram-img">
+                    </div>
+
+                    <h5>c) Phân hệ Quản lý Học liệu</h5>
+                    <p>Quản lý Đào tạo và Giáo viên có thể đăng tải tài liệu học tập với nhiều định dạng khác nhau. Các tài liệu sau khi đăng tải sẽ đi qua quy trình phê duyệt bắt buộc của Admin trước khi chính thức xuất bản cho học viên.</p>
+                    <div class="diagram-container">
+                        <img src="images/PlantUML Diagram (2).png" alt="Use Case Quản lý Học liệu" class="diagram-img">
+                    </div>
+
+                    <h5>d) Phân hệ Ngân hàng Câu hỏi &amp; Đề thi</h5>
+                    <p>Hỗ trợ soạn thảo các câu hỏi đa dạng (trắc nghiệm, tự luận, câu hỏi ghép cha-con) và quản lý theo danh mục chuyên đề. Giáo viên có thể thiết lập cấu trúc đề thi và nhân bản đề thi nhanh chóng từ các biểu mẫu có sẵn.</p>
+                    <div class="diagram-container">
+                        <img src="images/PlantUML Diagram (3).png" alt="Use Case Ngân hàng Câu hỏi &amp; Đề thi" class="diagram-img">
+                    </div>
+
+                    <h5>e) Phân hệ Quản lý Khóa học</h5>
+                    <p>Quản lý đào tạo thiết lập thông tin khóa học, hình thức học tập (Trực tuyến Zoom, Trực tiếp Classroom, Tự học hoặc Blended), tạo bài học (Sessions) và các hoạt động học tập, đồng thời thiết lập các điều kiện ràng buộc tiến trình học tập.</p>
+                    <div class="diagram-container">
+                        <img src="images/PlantUML Diagram (4).png" alt="Use Case Quản lý Khóa học" class="diagram-img">
+                    </div>
+
+                    <h5>f) Phân hệ Học tập &amp; Theo dõi Tiến trình</h5>
+                    <p>Học viên tham gia khóa học thông qua trình phát bài học (Course Player) để tích lũy thời gian học tập, làm bài kiểm tra trắc nghiệm hoặc nộp bài tự luận để giáo viên chấm điểm thủ công.</p>
+                    <div class="diagram-container">
+                        <img src="images/PlantUML Diagram (5).png" alt="Use Case Học tập &amp; Theo dõi Tiến trình" class="diagram-img">
+                    </div>
+
+                    <h5>g) Phân hệ Quản lý Phôi &amp; Cấp Chứng chỉ</h5>
+                    <p>Hỗ trợ giáo viên thiết kế phôi chứng chỉ (định dạng nền, chữ ký, căn lề). Hệ thống tự động ghi nhận khi học viên hoàn thành khóa học đạt chuẩn và phát hành chứng chỉ số tương ứng.</p>
+                    <div class="diagram-container">
+                        <img src="images/PlantUML Diagram (6).png" alt="Use Case Quản lý Phôi &amp; Cấp Chứng chỉ" class="diagram-img">
+                    </div>
+
+                    <h5>h) Phân hệ Thiết lập &amp; Theo dõi Chi phí</h5>
+                    <p>Hỗ trợ thiết lập các định mức chi phí cho khóa học bao gồm chi phí đứng lớp, chi phí học liệu và chi phí cam kết ràng buộc đối với học viên để phục vụ công tác đối soát tài chính đào tạo.</p>
+                    <div class="diagram-container">
+                        <img src="images/PlantUML Diagram (7).png" alt="Use Case Thiết lập &amp; Theo dõi Chi phí" class="diagram-img">
                     </div>
 
                     <p><strong>Bảng mô tả Use Case chi tiết — UC04: Học tập và làm bài kiểm tra:</strong></p>
@@ -1032,6 +1071,20 @@
                         <li><strong>Tầng giao diện (React SPA):</strong> Xử lý toàn bộ logic hiển thị, lưu trữ JWT Token phía client, tương tác mượt mà thông qua thư viện UI tùy biến.</li>
                         <li><strong>Tầng logic API (Laravel):</strong> Đóng vai trò làm Gateway tiếp nhận dữ liệu xác thực, xử lý các logic nghiệp vụ thông qua cấu trúc phân chia Module độc lập.</li>
                         <li><strong>Tầng dữ liệu (PostgreSQL):</strong> Lưu trữ dữ liệu phân tán ở 4 cơ sở dữ liệu độc lập, điều phối qua cấu hình kết nối động.</li>
+                    </ul>
+
+                    <h4>3.1.1. Phân hệ API Gateway (Kong &amp; Konga)</h4>
+                    <p>Để tối ưu hóa quản lý traffic, phân tải và bảo mật luồng thông tin giữa các dịch vụ trong môi trường Docker, hệ thống tích hợp giải pháp <strong>Kong API Gateway</strong> kết hợp với giao diện quản trị <strong>Konga</strong>:</p>
+                    <ul>
+                        <li><strong>Kong Gateway:</strong> Đóng vai trò là điểm truy cập duy nhất (Single Entry Point) cho toàn bộ các request từ ứng dụng React Frontend. Kong tiếp nhận các request dạng <code>api.elearning.thadico.vn</code> và định tuyến (Routing) chính xác đến container Laravel API chạy trong mạng Docker nội bộ.</li>
+                        <li><strong>Tính năng bảo mật &amp; Phân tải (Plugins):</strong>
+                            <ul>
+                                <li><strong>Rate Limiting:</strong> Giới hạn số lượng request từ mỗi địa chỉ IP (ví dụ: tối đa 120 requests/phút) để ngăn chặn các cuộc tấn công Brute-force hoặc DDoS vào API thi cử.</li>
+                                <li><strong>CORS Offloading:</strong> Cấu hình chính sách CORS tập trung tại Gateway, giúp loại bỏ sự phụ thuộc cấu hình CORS thủ công trên máy chủ PHP/Laravel.</li>
+                                <li><strong>Security Hardening:</strong> Thực hiện SSL Termination tại Gateway, mã hóa toàn bộ dữ liệu truyền tải qua giao thức HTTPS bảo mật.</li>
+                            </ul>
+                        </li>
+                        <li><strong>Konga GUI Dashboard:</strong> Cung cấp bảng quản trị trực quan chạy trên một container Docker độc lập, cho phép đội ngũ DevOps cấu hình động các Service, Route, Consumer và bật/tắt các Plugin bảo mật của Kong mà không cần khởi động lại dịch vụ hoặc viết cấu hình bằng lệnh.</li>
                     </ul>
 
                     <h3 id="kien-truc-phan-mem">3.2. Kiến trúc phần mềm</h3>
