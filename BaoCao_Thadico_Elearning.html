@@ -465,6 +465,15 @@
             border-radius: 4px;
         }
 
+        .diagram-img-large {
+            min-width: 1200px;
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+            border-radius: 4px;
+        }
+
         /* Divider */
         hr {
             border: none;
@@ -740,7 +749,7 @@
                     <h3 id="bieu-do-use-case">1.2. Biểu đồ use case</h3>
                     <p><strong>1.2.1. Biểu đồ use case tổng quát:</strong></p>
                     <div class="diagram-container">
-                        <img src="images/use_case_tong_quat.png" alt="Biểu đồ Use Case tổng quát E-Learning Hub" class="diagram-img">
+                        <img src="images/use_case_tong_quat.png" alt="Biểu đồ Use Case tổng quát E-Learning Hub" class="diagram-img-large">
                     </div>
 
                     <p><strong>1.2.2. Biểu đồ use case phân rã các phân hệ nghiệp vụ:</strong></p>
@@ -888,59 +897,7 @@
                     <h3 id="bieu-do-lop">2.2. Biểu đồ lớp (Class Diagram)</h3>
                     <p>Biểu đồ lớp dưới đây thể hiện cấu trúc tĩnh và mối liên kết logic giữa các Model Laravel thuộc các database khác nhau:</p>
                     <div class="diagram-container">
-                        <div class="mermaid">
-                        classDiagram
-                            class User {
-                                +int id
-                                +string name
-                                +string email
-                                +string employee_code
-                                +int department_id
-                                +int role_id
-                                +userStatus()
-                                +role()
-                            }
-                            class Department {
-                                +int id
-                                +string name
-                                +string code
-                                +int parent_id
-                            }
-                            class Course {
-                                +int id
-                                +string name
-                                +string status
-                                +int training_center_id
-                                +float course_costs
-                                +activities()
-                                +enrollments()
-                            }
-                            class Activity {
-                                +int id
-                                +int course_id
-                                +string name
-                                +string type
-                                +int model_id
-                                +string model_type
-                            }
-                            class Enrollment {
-                                +int id
-                                +int course_id
-                                +int user_id
-                                +string status
-                            }
-                            class Certificate {
-                                +int id
-                                +int user_id
-                                +int course_id
-                                +string code
-                            }
-                            User "1" --> "1" Department
-                            User "1" --> "N" Enrollment
-                            Course "1" --> "N" Enrollment
-                            Course "1" --> "N" Activity
-                            Enrollment "1" --> "N" Certificate
-                        </div>
+                        <img src="images/class_diagram.png" alt="Biểu đồ lớp (Class Diagram)" class="diagram-img">
                     </div>
 
                     <h3 id="bieu-do-tuan-tu">2.3. Biểu đồ tuần tự</h3>
