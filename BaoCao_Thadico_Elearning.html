@@ -740,41 +740,7 @@
                     <h3 id="bieu-do-use-case">1.2. Biểu đồ use case</h3>
                     <p><strong>1.2.1. Biểu đồ use case tổng quát:</strong></p>
                     <div class="diagram-container">
-                        <div class="mermaid">
-                        flowchart TD
-                            subgraph Tác nhân
-                                admin[Admin Hệ thống]
-                                manager[Quản lý Đào tạo]
-                                student[Học viên / Nhân viên]
-                            end
-                            subgraph Chức năng E-Learning Hub
-                                UC01(Đăng nhập hệ thống JWT)
-                                UC02(Quản lý phòng ban & Người dùng)
-                                UC03(Phân quyền & Vai trò Spatie)
-                                UC04(Đăng tải & Phê duyệt Học liệu)
-                                UC05(Ngân hàng Câu hỏi & Đề thi)
-                                UC06(Thiết lập & Phê duyệt Khóa học)
-                                UC07(Xem tài liệu & Bài học Zoom)
-                                UC08(Làm bài thi trắc nghiệm)
-                                UC09(Cấp chứng chỉ tự động)
-                                UC10(Thiết lập chi phí đào tạo)
-                            end
-                            admin --> UC01
-                            admin --> UC02
-                            admin --> UC03
-                            
-                            manager --> UC01
-                            manager --> UC04
-                            manager --> UC05
-                            manager --> UC06
-                            manager --> UC09
-                            manager --> UC10
-                            
-                            student --> UC01
-                            student --> UC07
-                            student --> UC08
-                            student --> UC09
-                        </div>
+                        <img src="images/use_case_tong_quat.png" alt="Biểu đồ Use Case tổng quát E-Learning Hub" class="diagram-img">
                     </div>
 
                     <p><strong>1.2.2. Biểu đồ use case phân rã các phân hệ nghiệp vụ:</strong></p>
