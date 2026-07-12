@@ -436,7 +436,8 @@
             border-radius: 8px;
             padding: 1.5rem;
             margin: 2rem 0;
-            overflow-x: auto;
+            overflow: auto; /* Enable scrollbars in both directions */
+            max-height: 750px; /* Limit vertical height for readability */
             box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
             text-align: center;
         }
@@ -448,7 +449,7 @@
 
         .mermaid {
             display: inline-block;
-            min-width: 900px;
+            min-width: 1400px; /* Zoomed size for high readability */
             width: 100%;
         }
 
@@ -591,6 +592,7 @@
                 <li class="nav-item"><a href="#bieu-do-tuan-tu" class="nav-link level-2">2.3. Biểu đồ tuần tự</a></li>
                 <li class="nav-item"><a href="#xac-dinh-thuc-the" class="nav-link level-2">2.4.1. Xác định thực thể</a></li>
                 <li class="nav-item"><a href="#erd-schema" class="nav-link level-2">2.4.2. Sơ đồ ERD</a></li>
+                <li class="nav-item"><a href="#dfd-schema" class="nav-link level-2">2.5. Sơ đồ luồng dữ liệu (DFD)</a></li>
                 
                 <li class="nav-item"><a href="#chuong-3" class="nav-link level-1">CHƯƠNG 3. THIẾT KẾ HỆ THỐNG</a></li>
                 <li class="nav-item"><a href="#kien-truc-tong-quan" class="nav-link level-2">3.1. Kiến trúc tổng quan</a></li>
@@ -939,30 +941,60 @@
                     <table>
                         <thead>
                             <tr>
-                                <th>Bảng dữ liệu</th>
-                                <th>Thuộc tính chính</th>
-                                <th>Kiểu dữ liệu</th>
-                                <th>Mô tả</th>
+                                <th style="width: 20%;">Bảng dữ liệu</th>
+                                <th style="width: 30%;">Thuộc tính chính</th>
+                                <th style="width: 25%;">Kiểu dữ liệu</th>
+                                <th style="width: 25%;">Mô tả</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
                                 <td><strong><code>users</code></strong></td>
                                 <td>id, name, email, employee_code, password, department_id, status</td>
-                                <td>BIGINT (PK), VARCHAR, VARCHAR, VARCHAR, VARCHAR, INT, VARCHAR</td>
-                                <td>Lưu trữ hồ sơ nhân sự của nhân viên tập đoàn.</td>
+                                <td>BIGINT (PK), VARCHAR, VARCHAR, VARCHAR, VARCHAR, INT (FK), VARCHAR</td>
+                                <td>Lưu trữ hồ sơ nhân sự của nhân viên tập đoàn THACO AGRI / THADICO.</td>
                             </tr>
                             <tr>
                                 <td><strong><code>courses</code></strong></td>
                                 <td>id, name, status, form_of_learning, start, end, training_center_id</td>
-                                <td>BIGINT (PK), VARCHAR, VARCHAR, VARCHAR, TIMESTAMP, TIMESTAMP, INT</td>
-                                <td>Lưu trữ thông tin khóa học và hình thức đào tạo.</td>
+                                <td>BIGINT (PK), VARCHAR, VARCHAR, VARCHAR, TIMESTAMP, TIMESTAMP, INT (FK)</td>
+                                <td>Lưu trữ thông tin chi tiết khóa học, thời gian và hình thức đào tạo.</td>
                             </tr>
                             <tr>
                                 <td><strong><code>activities</code></strong></td>
                                 <td>id, course_id, name, type, model_id, model_type, position</td>
                                 <td>BIGINT (PK), BIGINT (FK), VARCHAR, VARCHAR, BIGINT, VARCHAR, INT</td>
-                                <td>Các hoạt động học tập đa hình trong bài giảng.</td>
+                                <td>Quản lý các hoạt động đa hình (Material, Zoom, Classroom, Test) thuộc khóa học.</td>
+                            </tr>
+                            <tr>
+                                <td><strong><code>materials</code></strong></td>
+                                <td>id, name, status, topic_id, path, file_type, is_allows_video_rewinding, created_by</td>
+                                <td>BIGINT (PK), VARCHAR, VARCHAR, INT (FK), VARCHAR, VARCHAR, BOOLEAN, INT (FK)</td>
+                                <td>Quản lý học liệu số (PDF, Video, Youtube), trạng thái phê duyệt và cấu hình tương tác.</td>
+                            </tr>
+                            <tr>
+                                <td><strong><code>quizzes</code></strong></td>
+                                <td>id, name, total_marks, pass_marks, max_attempts, duration, type, created_by</td>
+                                <td>BIGINT (PK), VARCHAR, FLOAT, FLOAT, INT, INT, VARCHAR, INT (FK)</td>
+                                <td>Lưu trữ cấu trúc ngân hàng đề kiểm tra, điểm số và thời gian làm bài.</td>
+                            </tr>
+                            <tr>
+                                <td><strong><code>questions</code></strong></td>
+                                <td>id, name, question_type_id, level, description, parent_id, created_by</td>
+                                <td>BIGINT (PK), VARCHAR, INT (FK), VARCHAR, TEXT, INT (FK), INT (FK)</td>
+                                <td>Ngân hàng câu hỏi trắc nghiệm/tự luận phân loại theo chủ đề và cấp độ khó dễ.</td>
+                            </tr>
+                            <tr>
+                                <td><strong><code>quiz_attempts</code></strong></td>
+                                <td>id, quiz_id, participant_id, participant_type, score, is_passed, is_submitted, questions</td>
+                                <td>BIGINT (PK), BIGINT (FK), BIGINT (FK), VARCHAR, FLOAT, BOOLEAN, BOOLEAN, JSON</td>
+                                <td>Ghi nhận lịch sử làm bài thi, danh sách câu hỏi đã trộn, kết quả điểm số của học viên.</td>
+                            </tr>
+                            <tr>
+                                <td><strong><code>costs</code></strong></td>
+                                <td>id, model_type, model_id, key, value, beneficiary_id, is_approved, metadata</td>
+                                <td>BIGINT (PK), VARCHAR, BIGINT, VARCHAR, FLOAT, BIGINT (FK), BOOLEAN, JSON</td>
+                                <td>Theo dõi chi phí đào tạo thực tế (chi phí đứng lớp, học liệu, cam kết) được liên kết đa hình.</td>
                             </tr>
                         </tbody>
                     </table>
@@ -975,9 +1007,171 @@
                             USERS ||--o{ ENROLLMENTS : "đăng ký học"
                             COURSES ||--o{ ENROLLMENTS : "gồm danh sách"
                             COURSES ||--o{ ACTIVITIES : "chứa nội dung"
-                            ACTIVITIES ||--o| MATERIALS : "liên kết polymorphic"
-                            ACTIVITIES ||--o| QUIZZES : "liên kết polymorphic"
+                            ACTIVITIES ||--o| MATERIALS : "polymorphic"
+                            ACTIVITIES ||--o| QUIZZES : "polymorphic"
+                            QUIZZES ||--o{ QUIZ_ATTEMPTS : "ghi nhận lượt thi"
+                            USERS ||--o{ QUIZ_ATTEMPTS : "tham gia làm bài"
+                            QUIZZES ||--o{ QUESTIONS : "chứa câu hỏi (quiz_questions)"
+                            QUESTIONS ||--o{ QUESTION_OPTIONS : "có các lựa chọn"
                             USERS ||--o{ CERTIFICATES : "sở hữu"
+                            COURSES ||--o{ CERTIFICATES : "cấp cho"
+                            COURSES ||--o{ COSTS : "phát sinh chi phí (polymorphic)"
+                            MATERIALS ||--o{ COSTS : "phát sinh chi phí (polymorphic)"
+                            USERS ||--o{ COSTS : "thụ hưởng (beneficiary)"
+                        </div>
+                    </div>
+
+                    <h3 id="dfd-schema">2.5. Sơ đồ luồng dữ liệu (Data Flow Diagram - DFD)</h3>
+                    
+                    <h4>2.5.1. Sơ đồ luồng dữ liệu mức ngữ cảnh (DFD Level 0)</h4>
+                    <p>Sơ đồ ngữ cảnh cung cấp góc nhìn tổng quan về các luồng thông tin vào/ra giữa hệ thống E-Learning Hub và các tác nhân bên ngoài (Học viên, Giáo viên, Admin và Hệ thống nhân sự HR):</p>
+                    <div class="diagram-container">
+                        <div class="mermaid">
+                        graph TD
+                            %% Entities
+                            HV[Học viên]
+                            GV[Giáo viên / Quản lý đào tạo]
+                            AD[Admin hệ thống]
+                            HR[Hệ thống nhân sự THACO AGRI]
+
+                            %% System
+                            EL[("HỆ THỐNG E-LEARNING HUB")]
+
+                            %% Flows
+                            HV -- "Đăng ký học, Làm bài thi, Phản hồi học tập" --> EL
+                            EL -- "Tài liệu học tập, Kết quả thi, Chứng chỉ số" --> HV
+
+                            GV -- "Soạn học liệu, Đề thi, Thiết lập chi phí, Chấm điểm" --> EL
+                            EL -- "Báo cáo tiến trình, Thống kê chi phí, Kết quả nộp bài" --> GV
+
+                            AD -- "Cấu hình hệ thống, Phân quyền RBAC, Duyệt học liệu/khóa học" --> EL
+                            EL -- "Nhật ký hệ thống (Audit Logs), Báo cáo hiệu năng" --> AD
+
+                            HR -- "Thông tin nhân viên, Cấu trúc phòng ban" --> EL
+                            EL -- "Đồng bộ trạng thái, Dữ liệu đào tạo nhân viên" --> HR
+
+                            %% Styling
+                            classDef entity fill:#1B365D,stroke:#fff,stroke-width:2px,color:#fff;
+                            classDef system fill:#0A5C36,stroke:#fff,stroke-width:3px,color:#fff,font-weight:bold;
+                            class HV,GV,AD,HR entity;
+                            class EL system;
+                        </div>
+                    </div>
+
+                    <h4>2.5.2. Sơ đồ luồng dữ liệu mức 1 (DFD Level 1) các phân hệ nghiệp vụ chính</h4>
+                    
+                    <h5>a) Quy trình Phê duyệt Học liệu (Material Approval Flow)</h5>
+                    <p>Mô tả luồng dữ liệu khi Giáo viên đăng tải bài giảng số, lưu trữ tệp vật lý tại MinIO/S3 và quy trình kiểm duyệt, xuất bản học liệu của Admin hệ thống:</p>
+                    <div class="diagram-container">
+                        <div class="mermaid">
+                        graph TD
+                            GV[Giáo viên / Quản lý]
+                            AD[Admin hệ thống]
+                            DB[(PostgreSQL learning-db)]
+                            Storage[(Bộ lưu trữ MinIO/S3)]
+
+                            P1[1.1 Đăng tải & Soạn Học liệu]
+                            P2[1.2 Yêu cầu Phê duyệt]
+                            P3[1.3 Phê duyệt / Từ chối]
+
+                            GV -- "Tải lên file học liệu (PDF, MP4...)" --> P1
+                            P1 -- "Lưu trữ tệp tin vật lý" --> Storage
+                            P1 -- "Ghi nhận thông tin học liệu (Trạng thái: Nháp)" --> DB
+
+                            GV -- "Gửi yêu cầu duyệt" --> P2
+                            P2 -- "Cập nhật trạng thái: Chờ duyệt (Pending)" --> DB
+
+                            AD -- "Kiểm tra học liệu & Quyết định duyệt" --> P3
+                            P3 -- "Cập nhật trạng thái: Hoạt động (Approved)" --> DB
+                            P3 -- "Từ chối kèm lý do (Rejected)" --> DB
+                            P3 -- "Gửi thông báo kết quả duyệt" --> GV
+
+                            %% Styling
+                            classDef entity fill:#1B365D,stroke:#fff,stroke-width:2px,color:#fff;
+                            classDef process fill:#0A5C36,stroke:#fff,stroke-width:2px,color:#fff;
+                            classDef datastore fill:#ffc107,stroke:#333,stroke-width:2px,color:#333;
+                            
+                            class GV,AD entity;
+                            class P1,P2,P3 process;
+                            class DB,Storage datastore;
+                        </div>
+                    </div>
+
+                    <h5>b) Quy trình Thi và Chấm điểm tự động (Quiz &amp; Auto Grading Flow)</h5>
+                    <p>Mô tả luồng dữ liệu từ khi học viên bắt đầu ca thi trắc nghiệm/tự luận, hệ thống trộn đề thi động, ghi nhận câu trả lời tạm thời và tự động tính toán điểm số để cập nhật tiến trình khóa học:</p>
+                    <div class="diagram-container">
+                        <div class="mermaid">
+                        graph TD
+                            HV[Học viên]
+                            GV[Giáo viên / Quản lý]
+                            DB_Exam[(PostgreSQL exam-db)]
+                            DB_Learn[(PostgreSQL learning-db)]
+
+                            P1[2.1 Đăng ký & Bắt đầu làm bài]
+                            P2[2.2 Làm bài & Trả lời câu hỏi]
+                            P3[2.3 Nộp bài & Chấm điểm tự động]
+                            P4[2.4 Ghi nhận & Cập nhật tiến độ]
+
+                            HV -- "Yêu cầu thi" --> P1
+                            P1 -- "Đọc cấu trúc Quiz & Trộn đề" --> DB_Exam
+                            P1 -- "Hiển thị đề thi & đếm ngược" --> HV
+
+                            HV -- "Chọn đáp án" --> P2
+                            P2 -- "Lưu câu trả lời tạm thời" --> DB_Exam
+
+                            HV -- "Nộp bài (Submit)" --> P3
+                            P3 -- "So khớp đáp án đúng & Tính điểm" --> DB_Exam
+                            P3 -- "Cập nhật trạng thái lượt thi (is_submitted, score)" --> DB_Exam
+
+                            P3 -- "Nếu điểm >= điểm đạt" --> P4
+                            P4 -- "Cập nhật trạng thái hoạt động (Completed)" --> DB_Learn
+                            P4 -- "Nếu hoàn thành khóa học -> Tạo phôi chứng chỉ" --> DB_Learn
+
+                            P3 -- "Hiển thị kết quả (Đạt/Không đạt, Điểm số)" --> HV
+                            GV -- "Chấm điểm câu hỏi tự luận" --> P3
+
+                            %% Styling
+                            classDef entity fill:#1B365D,stroke:#fff,stroke-width:2px,color:#fff;
+                            classDef process fill:#0A5C36,stroke:#fff,stroke-width:2px,color:#fff;
+                            classDef datastore fill:#ffc107,stroke:#333,stroke-width:2px,color:#333;
+                            
+                            class HV,GV entity;
+                            class P1,P2,P3,P4 process;
+                            class DB_Exam,DB_Learn datastore;
+                        </div>
+                    </div>
+
+                    <h5>c) Quy trình Thiết lập &amp; Duyệt Chi phí Đào tạo (Cost Setup &amp; Approval Flow)</h5>
+                    <p>Mô tả luồng dữ liệu thiết lập các loại chi phí định mức cho giảng viên đứng lớp, tài liệu in ấn và chi phí cam kết học tập của học viên, đồng thời tích hợp cổng đối soát tài chính phục vụ phê duyệt chi phí đào tạo:</p>
+                    <div class="diagram-container">
+                        <div class="mermaid">
+                        graph TD
+                            GV[Giáo viên / Quản lý]
+                            AD[Admin hệ thống]
+                            DB_Learn[(PostgreSQL learning-db)]
+
+                            P1[3.1 Thiết lập định mức Chi phí]
+                            P2[3.2 Ghi nhận Chi phí thực tế]
+                            P3[3.3 Phê duyệt Chi phí]
+
+                            GV -- "Nhập đơn giá (chi phí đứng lớp, tài liệu, cam kết)" --> P1
+                            P1 -- "Lưu thông tin định mức chi phí" --> DB_Learn
+
+                            GV -- "Khai báo chi phí phát sinh" --> P2
+                            P2 -- "Lưu bản ghi chi phí (is_approved: false)" --> DB_Learn
+
+                            AD -- "Kiểm tra chứng từ & Phê duyệt chi phí" --> P3
+                            P3 -- "Cập nhật trạng thái duyệt (is_approved: true)" --> DB_Learn
+                            P3 -- "Kết xuất báo cáo chi phí tổng hợp" --> AD
+
+                            %% Styling
+                            classDef entity fill:#1B365D,stroke:#fff,stroke-width:2px,color:#fff;
+                            classDef process fill:#0A5C36,stroke:#fff,stroke-width:2px,color:#fff;
+                            classDef datastore fill:#ffc107,stroke:#333,stroke-width:2px,color:#333;
+                            
+                            class GV,AD entity;
+                            class P1,P2,P3 process;
+                            class DB_Learn datastore;
                         </div>
                     </div>
                 </section>
